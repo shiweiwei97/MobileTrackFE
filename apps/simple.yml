@@ -1,0 +1,26 @@
+name: simple
+
+models: [ Todos ]
+
+actions:
+    addItem: /todo/add
+    removeItem: /todo/remove
+
+stores:
+    TodoStore:
+        actions: [ addItem, removeItem ]
+
+pages:
+    index:
+        stores: [ TodoStore ]
+        app: App
+
+routes:
+    index: /index
+
+components:
+    App:
+    Input:
+    TodoList:
+        watch: [ TodoStore ]
+    TodoItem:

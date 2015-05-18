@@ -1,0 +1,8 @@
+default:
+    appsDir: './apps'
+
+development:
+
+test:
+
+production:
