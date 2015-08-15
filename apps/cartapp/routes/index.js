@@ -1,3 +1,6 @@
+/**
+ *        Copyright (c) 2015 Yahoo! Inc. All rights reserved.
+ */
 /* jslint node: true */
 
 "use strict";
@@ -16,8 +19,8 @@ var KEY_PREFIX  = "cartItems:",
 
 routes.index = function (req, res) {
 
-    var userid = req.userid,
-        key    = KEY_PREFIX + userid;
+    var backyardId = req.backyardId,
+        key        = KEY_PREFIX + backyardId;
 
     redis.get(key, function (err, data) {
 
@@ -30,9 +33,9 @@ routes.index = function (req, res) {
 
     routes[funcName] = function (req, res) {
 
-        var userid = req.userid,
-            key    = KEY_PREFIX + userid,
-            param  = req.body['addItem' === funcName? 'item': 'index'];
+        var backyardId = req.backyardId,
+            key        = KEY_PREFIX + backyardId,
+            param      = req.body['addItem' === funcName? 'item': 'index'];
 
         redis.get(key, function (err, data) {
 

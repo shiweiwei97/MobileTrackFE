@@ -1,3 +1,7 @@
+/**
+ *        Copyright (c) 2015 Yahoo! Inc. All rights reserved.
+ */
+
 /* jslint node: true */
 /** @jsx React.DOM */
 
