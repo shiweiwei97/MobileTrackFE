@@ -1,56 +1,58 @@
 /* jslint node: true */
 
-var express         = require('express');
-var path            = require('path');
-var fs              = require('fs');
-var _               = require('lodash');
-var reactViews      = require('express-react-views');
-var bodyParser      = require('body-parser');
-var multer          = require('multer');
-var cookieParser    = require('cookie-parser');
-var bouncer         = require('./middleware/bouncer');
-var routes          = require('./routes');
-var appConfig       = require('./lib/config');
+'use strict';
 
-var app             = express(),
-    configFile      = path.join(__dirname, 'app.yml'),
-    config          = new appConfig(configFile).getConfig();
+/*
+ * Express Dependencies
+ */
+var express     = require('express'),
+    exphbs      = require('express-handlebars'),
+    compression = require('compression'),
+    path        = require('path'),
+    bodyParser  = require('body-parser'),
+    log         = require('log4js').getLogger();
 
-// view engine
-app.set('view engine', 'jsx');
-app.engine('jsx', reactViews.createEngine({}));
-app.set('views', config.appsDir);
+var app  = express(),
+    port = process.env.PORT || 3000;
 
-// middlewares
+// gzip compression
+app.use(compression());
+
+// body parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(multer());
-app.use(cookieParser());
-app.use(express.static(__dirname + '/public', {
-        setHeaders: function (res) {
-            res.set('X-No-Bouncer', true);
-        }
-    })
-);
-app.use(bouncer());
 
-// routes
-app.get ('/', routes.index);
+app.use(express.query());
 
-// load apps routers
-var appsDir = path.join(__dirname, config.appsDir || 'apps');
-var apps = fs.readdirSync(appsDir).filter(function(file) {
-    return fs.statSync(path.join(appsDir, file)).isDirectory();
+// view engine config
+var appDir    = process.env.NODE_ENV === 'production'? 'dist/app': 'app',
+    assetsDir = path.join(appDir, 'assets');
+
+app.engine('handlebars', exphbs({
+    defaultLayout: 'master',
+    layoutsDir:    path.join(appDir, 'views/layouts'),
+    partialsDir:   path.join(appDir, 'views/partials')
+}));
+
+// Locate the views
+app.set('views', path.join(appDir, 'views'));
+
+// Locate the assets
+app.use(              express.static(path.join('.', assetsDir), { maxAge: 3600000 }));
+app.use('/users',     express.static(path.join('.', assetsDir), { maxAge: 3600000 }));
+app.use('/retention', express.static(path.join('.', assetsDir), { maxAge: 3600000 }));
+app.use('/engage',    express.static(path.join('.', assetsDir), { maxAge: 3600000 }));
+app.use('/features',  express.static(path.join('.', assetsDir), { maxAge: 3600000 }));
+app.use('/devices',   express.static(path.join('.', assetsDir), { maxAge: 3600000 }));
+
+// Set Handlebars
+app.set('view engine', 'handlebars');
+
+// Index Page
+app.get('/', function(request, response) {
+    response.render('index');
 });
 
-// load app routes and static resources
-_.each(apps, function (appName) {
-    app.use('/' + appName, require('./apps/' + appName + '/routes'));
-    app.use('/public/' + appName, express.static(__dirname + '/apps/' + appName + '/public'));
-});
-
-// start the app
-var port = process.env.PORT || 3000;
-app.listen(port, function () {
-    console.log('Server started, listening on port ' + port);
-});
+// start server
+app.listen(port);
+log.info('Express started on port ' + port);

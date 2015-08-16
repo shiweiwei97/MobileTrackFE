@@ -1,0 +1,41 @@
+.slides section pre code.code {
+  font-size: 18px;
+  margin: 10px;
+  padding: 10px;
+}
+.reveal section img.bigimage {
+  border: 0;
+}
+.reveal section li a b {
+  color: red;
+}
+.reveal section li {
+  margin-top: 10px;
+  font-size: 1.5em;
+}
+.reveal section table {
+  margin: auto;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+.reveal section table th {
+  font-weight: bold;
+}
+.reveal section table th,
+.reveal section table td {
+  text-align: left;
+  padding: 0.2em 0.5em 0.2em 0.5em;
+  border-bottom: 1px solid;
+}
+.reveal section table tr:last-child td {
+  border-bottom: none;
+}
+.reveal section table tr td:last-child {
+  text-align: right;
+}
+.reveal section h3 {
+  line-height: 60px;
+}
+.reveal section h2 {
+  font-size: 3.5em;
+}
